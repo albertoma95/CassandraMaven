@@ -9,7 +9,7 @@ import com.datastax.driver.core.Session;
 import config.CassandraConnector;
 import java.util.List;
 import model.Empleado;
-import model.Evento;
+import model.Historial;
 import model.Incidencia;
 import model.Ranking;
 
@@ -78,12 +78,12 @@ public class CassandraDAO implements DaoImpl {
     }
 
     @Override
-    public void insertarEvento(Evento e) {
+    public void insertarEvento(Historial e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Evento getUltimoInicioSesion(Empleado e) {
+    public Historial getUltimoInicioSesion(Empleado e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

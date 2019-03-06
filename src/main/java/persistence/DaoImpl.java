@@ -7,7 +7,7 @@ package persistence;
 
 import java.util.List;
 import model.Empleado;
-import model.Evento;
+import model.Historial;
 import model.Incidencia;
 import model.Ranking;
 
@@ -54,10 +54,10 @@ public interface DaoImpl {
     // 1) Cuando un usuario hace login 
     // 2) Cuando un usuario crea una incidencia de tipo urgente 
     // 3) Cuando se consultan las incidencias destinadas a un usuario 
-    public void insertarEvento(Evento e);
+    public void insertarEvento(Historial e);
     
     // Obtener la fecha-hora del último inicio de sesión para un empleado.
-    public Evento getUltimoInicioSesion(Empleado e);
+    public Historial getUltimoInicioSesion(Empleado e);
 
     // Obtener el ranking de los empleados por cantidad de incidencias
     // urgentes creadas (más incidencias urgentes primero).
