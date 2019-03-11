@@ -17,14 +17,11 @@ import model.Ranking;
  */
 public interface DaoImpl {
 
-    // Método para insertar un nuevo empleado.
-    public void insertEmpleado(Empleado e);
+    // Método para insertar y hacer update de un nuevo empleado (CAMBIO!).
+    public void saveOrUpdateEmpleado(Empleado e);
 
     // Método para validar el login de un empleado.
     public boolean loginEmpleado(String user, String pass);
-
-    // Método para modificar el perfil de un empleado.
-    public void updateEmpleado(Empleado e);
 
     // Método para eliminar un empleado.
     public void removeEmpleado(Empleado e);

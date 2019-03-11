@@ -5,7 +5,10 @@
  */
 package persistence;
 
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import config.CassandraConnector;
 import java.util.List;
 import model.Empleado;
@@ -19,31 +22,41 @@ import model.Ranking;
  */
 public class CassandraDAO implements DaoImpl {
     
-    private CassandraConnector cassandraConnector = CassandraConnector.getInstance();
+    private CassandraConnector cassandraConnector;
+    private static CassandraDAO cassandraDAO;
+    
+    private static final String NOMBRE_DATABASE = "stucom_incidencias";
+    private static final String NOMBRE_TABLA = "empleado";
+    private String NUSUARIO_COL = "nusuario", APELLIDO_COL = "apellido", 
+            EDAD_COL = "edad", NOMBRE_COL = "nombre", PASSWORD_COL = "password";
+
+    public CassandraDAO() {
+        cassandraConnector = CassandraConnector.getInstance();
+    }
+    
+     public static CassandraDAO getInstance() {
+        if(cassandraDAO == null)
+            cassandraDAO = new CassandraDAO();
+        return cassandraDAO;
+    }
     
     @Override
-    public void insertEmpleado(Empleado e) {
+    public void saveOrUpdateEmpleado(Empleado e) {
         Session session = cassandraConnector.getSession();
-        /*
-        ResultSet result = session.execute("SELECT * FROM student;");
-        result.forEach(System.out::println);
-        List<String> columns = result.getColumnDefinitions().asList().stream()
-                .map(column -> column.getName())
-                .collect(Collectors.toList());
-        columns.forEach(System.out::println);
         
-        session.close();
-        cluster.close();
-        */
+        Insert insert = QueryBuilder.insertInto(NOMBRE_DATABASE, NOMBRE_TABLA)
+                                    .value(NUSUARIO_COL, e.getNusuario())
+                                    .value(APELLIDO_COL, e.getApellido())
+                                    .value(EDAD_COL, e.getEdad())
+                                    .value(NOMBRE_COL, e.getNombre())
+                                    .value(PASSWORD_COL, e.getPassword());
+        System.out.println(insert.toString());
+        ResultSet result = session.execute(insert.toString());
+        // System.out.println(result.getExecutionInfo().getQueryTrace());
     }
 
     @Override
     public boolean loginEmpleado(String user, String pass) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateEmpleado(Empleado e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
