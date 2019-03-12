@@ -33,7 +33,9 @@ public interface DaoImpl {
     public List<Incidencia> selectAllIncidencias();
 
     // Insertar una incidencia a partir de un objeto incidencia
-    public void insertIncidencia(Incidencia i);
+    public void insertOrUpdateIncidencia(Incidencia i);
+    
+    public void removeIncidencia(Incidencia i);
 
     // Obtener la lista de incidencias con destino un determinado
     // empleado, a partir de un objeto empleado.

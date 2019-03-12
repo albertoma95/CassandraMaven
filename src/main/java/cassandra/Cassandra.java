@@ -6,6 +6,8 @@
 package cassandra;
 
 import controller.IncidenciasController;
+import model.Empleado;
+import model.Incidencia;
 
 /**
  *
@@ -20,7 +22,19 @@ public class Cassandra {
      */
     public static void main(String[] args) {
         incidenciasController = IncidenciasController.getInstance();
-        incidenciasController.insertEmpleado("amanzano", "Alberto", "Manzano", 21, "1234");
+        
+        // incidenciasController.deleteEmpleado("amanzano");
     }
     
+    
+    private void createEmpleado() {
+        Empleado empleado = InputAsker.askNewEmpleado();
+        incidenciasController.insertEmpleado(empleado);
+    }
+    
+    private void createIncidencia() {
+        Empleado origen = new Empleado("", "", "", 0, "");
+        Incidencia incidencia = InputAsker.askNewIncidencia(origen);
+        incidenciasController.insertIncidencia(incidencia);
+    }
 }

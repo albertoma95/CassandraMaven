@@ -5,7 +5,9 @@
  */
 package controller;
 
+import java.util.Date;
 import model.Empleado;
+import model.Incidencia;
 import persistence.CassandraDAO;
 
 /**
@@ -27,9 +29,17 @@ public class IncidenciasController {
         cassandraDAO = CassandraDAO.getInstance();
     }
 
-    public void insertEmpleado(String nusuario, String nombre, String apellido, int edad, String password) {
-        Empleado empleado = new Empleado(nusuario, nombre, apellido, edad, password);
+    public void insertEmpleado(Empleado empleado) {
         cassandraDAO.saveOrUpdateEmpleado(empleado);
     }
     
+    public void insertIncidencia(Incidencia incidencia){
+        cassandraDAO.insertOrUpdateIncidencia(incidencia);
+        
+    }
+
+    public void deleteEmpleado(String nusuario) {
+        Empleado empleado = new Empleado(nusuario, "", "", 0, "");
+        cassandraDAO.removeEmpleado(empleado);
+    }    
 }
