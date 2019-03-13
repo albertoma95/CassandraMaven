@@ -5,6 +5,7 @@
  */
 package cassandra;
 
+import controller.IncidenciasController;
 import java.util.Date;
 import model.Empleado;
 import model.Incidencia;
@@ -14,9 +15,11 @@ import model.Incidencia;
  * @author Alberto
  */
 public class InputAsker {
+    private static IncidenciasController incidenciasController = IncidenciasController.getInstance();
     
     public static Empleado askNewEmpleado() {
         String nusuario = "";
+        incidenciasController.checkNUsuario(nusuario);
         String nombre = "";
         String apellido = "";
         int edad = 0;

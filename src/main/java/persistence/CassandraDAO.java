@@ -8,10 +8,12 @@ package persistence;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import com.datastax.driver.core.querybuilder.Select;
 import config.CassandraConnector;
 import java.util.List;
 import model.Empleado;
@@ -130,6 +132,19 @@ public class CassandraDAO implements DaoImpl {
     @Override
     public List<Ranking> getRankingEmpleados() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Empleado getEmpleadoByNusuario(String nUsuario) {
+        Session session = cassandraConnector.getSession();
+        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA);
+        Select.Where selectWhere = selectQuery.where();
+        Clause clause = QueryBuilder.eq(NUSUARIO_COL, nUsuario);
+        selectWhere.and(clause).limit(1);
+        ResultSet results = session.execute(selectQuery);
+        Row row = results.one();
+        Empleado empleado = new Empleado();
+        return null;
     }
 
 }

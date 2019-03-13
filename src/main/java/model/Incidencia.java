@@ -13,7 +13,6 @@ import java.util.Date;
  */
 public class Incidencia {
 
-    private static int index = 1;
     private int id;
     private Empleado origen;
     private Empleado destino;
@@ -23,7 +22,6 @@ public class Incidencia {
     private boolean urgente;
 
     public Incidencia(Empleado origen, Empleado destino, String descripcion, int estado, Date fecha, boolean urgente) {
-        this.id = index++;
         this.descripcion = descripcion;
         this.destino = destino;
         this.estado = estado;

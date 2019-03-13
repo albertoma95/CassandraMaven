@@ -42,4 +42,8 @@ public class IncidenciasController {
         Empleado empleado = new Empleado(nusuario, "", "", 0, "");
         cassandraDAO.removeEmpleado(empleado);
     }    
+
+    public void checkNUsuario(String nusuario) {
+        cassandraDAO.getEmpleadoByNusuario(nusuario);
+    }
 }

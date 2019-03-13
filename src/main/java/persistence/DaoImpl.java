@@ -28,6 +28,8 @@ public interface DaoImpl {
 
     // Obtener una Incidencia a partir de su Id.
     public Incidencia getIncidenciaById(int id);
+    
+    public Empleado getEmpleadoByNusuario(String nUsuario);
 
     // Obtener una lista de todas las incidencias
     public List<Incidencia> selectAllIncidencias();
