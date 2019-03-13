@@ -32,7 +32,7 @@ public class CassandraDAO implements DaoImpl {
 
     private static final String NOMBRE_DATABASE = "stucom_incidencias";
     private static final String NOMBRE_TABLA = "empleado";
-    private static final String NOMBRE_TABLA_iNCIDENCIA = "incidencia";
+    private static final String NOMBRE_TABLA_INCIDENCIA = "incidencia";
     private String NUSUARIO_COL = "nusuario", APELLIDO_COL = "apellido",
             EDAD_COL = "edad", NOMBRE_COL = "nombre", PASSWORD_COL = "password";
 
@@ -92,7 +92,7 @@ public class CassandraDAO implements DaoImpl {
     @Override
     public void insertOrUpdateIncidencia(Incidencia i) {
         Session session = cassandraConnector.getSession();
-        Insert insert = QueryBuilder.insertInto(NOMBRE_DATABASE, NOMBRE_TABLA_iNCIDENCIA)
+        Insert insert = QueryBuilder.insertInto(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA)
                 .value(ID_COL, i.getId())
                 .value(ORIGEN_COL, i.getOrigen().getNusuario())
                 .value(DESTINO_COL, i.getDestino().getNusuario())
@@ -106,7 +106,12 @@ public class CassandraDAO implements DaoImpl {
     
     @Override
     public void removeIncidencia(Incidencia i){
-        
+        Session session = cassandraConnector.getSession();
+        Delete.Where delete = QueryBuilder.delete()
+                .from(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA)
+                .where(eq(ID_COL, i.getId()));
+        System.out.println(delete);
+        ResultSet result = session.execute(delete);
     }
 
     @Override
@@ -143,8 +148,15 @@ public class CassandraDAO implements DaoImpl {
         selectWhere.and(clause).limit(1);
         ResultSet results = session.execute(selectQuery);
         Row row = results.one();
+        if(row == null) return null;
+        
         Empleado empleado = new Empleado();
-        return null;
+        empleado.setNusuario(row.getString(NUSUARIO_COL));
+        empleado.setNombre(row.getString(NOMBRE_COL));
+        empleado.setApellido(row.getString(APELLIDO_COL));
+        empleado.setPassword(row.getString(PASSWORD_COL));
+        empleado.setEdad(row.getInt(EDAD_COL));
+        return empleado;
     }
 
 }
