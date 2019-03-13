@@ -8,6 +8,7 @@ package persistence;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
@@ -20,6 +21,7 @@ import model.Empleado;
 import model.Historial;
 import model.Incidencia;
 import model.Ranking;
+import utilities.MyUtilities;
 
 /**
  *
@@ -31,12 +33,12 @@ public class CassandraDAO implements DaoImpl {
     private static CassandraDAO cassandraDAO;
 
     private static final String NOMBRE_DATABASE = "stucom_incidencias";
-    private static final String NOMBRE_TABLA = "empleado";
+    private static final String NOMBRE_TABLA_EMPLEADO = "empleado";
     private static final String NOMBRE_TABLA_INCIDENCIA = "incidencia";
     private String NUSUARIO_COL = "nusuario", APELLIDO_COL = "apellido",
             EDAD_COL = "edad", NOMBRE_COL = "nombre", PASSWORD_COL = "password";
 
-    private String ID_COL = "id", ORIGEN_COL = "origen", DESTINO_COL = "destino", FECHA_COL = "fecha",
+    private String ID_INC_COL = "id", ORIGEN_COL = "origen", DESTINO_COL = "destino", FECHA_COL = "fecha",
             ESTADO_COL = "estado", DESCRIPCION_COL = "descripcion", URGENTE_COL = "urgente";
 
     public CassandraDAO() {
@@ -53,7 +55,7 @@ public class CassandraDAO implements DaoImpl {
     @Override
     public void saveOrUpdateEmpleado(Empleado e) {
         Session session = cassandraConnector.getSession();
-        Insert insert = QueryBuilder.insertInto(NOMBRE_DATABASE, NOMBRE_TABLA)
+        Insert insert = QueryBuilder.insertInto(NOMBRE_DATABASE, NOMBRE_TABLA_EMPLEADO)
                 .value(NUSUARIO_COL, e.getNusuario())
                 .value(APELLIDO_COL, e.getApellido())
                 .value(EDAD_COL, e.getEdad())
@@ -65,15 +67,27 @@ public class CassandraDAO implements DaoImpl {
     }
 
     @Override
-    public boolean loginEmpleado(String user, String pass) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean loginEmpleado(String nusuario, String password) {
+        Session session = cassandraConnector.getSession();
+        Statement s = QueryBuilder.select().all()
+        .from(NOMBRE_TABLA_EMPLEADO)
+        .where(eq(NUSUARIO_COL, nusuario))
+        .and(eq(PASSWORD_COL, password));
+        
+        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_EMPLEADO);
+        Select.Where selectWhere = selectQuery.where();
+        Clause clause = QueryBuilder.eq(NUSUARIO_COL, nusuario);
+        Clause clause2 = QueryBuilder.eq(PASSWORD_COL, password);
+        selectWhere.and(clause).and(clause2);
+        ResultSet results = session.execute(selectQuery);
+        return results.one() != null;
     }
 
     @Override
     public void removeEmpleado(Empleado e) {
         Session session = cassandraConnector.getSession();
         Delete.Where delete = QueryBuilder.delete()
-                .from(NOMBRE_DATABASE, NOMBRE_TABLA)
+                .from(NOMBRE_DATABASE, NOMBRE_TABLA_EMPLEADO)
                 .where(eq(NUSUARIO_COL, e.getNusuario()));
         System.out.println(delete);
         ResultSet result = session.execute(delete);
@@ -81,7 +95,24 @@ public class CassandraDAO implements DaoImpl {
 
     @Override
     public Incidencia getIncidenciaById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       Session session = cassandraConnector.getSession();
+        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA);
+        Select.Where selectWhere = selectQuery.where();
+        Clause clause = QueryBuilder.eq(ID_INC_COL, id);
+        selectWhere.and(clause).limit(1);
+        ResultSet results = session.execute(selectQuery);
+        Row row = results.one();
+        if(row == null) return null;
+        
+        Incidencia incidencia = new Incidencia();
+        incidencia.setId(row.getInt(ID_INC_COL));
+        incidencia.setOrigen(new Empleado(row.getString(ORIGEN_COL)));
+        incidencia.setEstado(row.getInt(ESTADO_COL));
+        incidencia.setDestino(new Empleado(row.getString(DESTINO_COL)));
+        incidencia.setDescripcion(row.getString(DESTINO_COL));
+        incidencia.setFecha(MyUtilities.stringToDate(row.getString(DESCRIPCION_COL)));
+        incidencia.setUrgente(row.getBool(URGENTE_COL));
+        return incidencia;
     }
 
     @Override
@@ -93,7 +124,7 @@ public class CassandraDAO implements DaoImpl {
     public void insertOrUpdateIncidencia(Incidencia i) {
         Session session = cassandraConnector.getSession();
         Insert insert = QueryBuilder.insertInto(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA)
-                .value(ID_COL, i.getId())
+                .value(ID_INC_COL, i.getId())
                 .value(ORIGEN_COL, i.getOrigen().getNusuario())
                 .value(DESTINO_COL, i.getDestino().getNusuario())
                 .value(FECHA_COL, i.getFecha())
@@ -109,7 +140,7 @@ public class CassandraDAO implements DaoImpl {
         Session session = cassandraConnector.getSession();
         Delete.Where delete = QueryBuilder.delete()
                 .from(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA)
-                .where(eq(ID_COL, i.getId()));
+                .where(eq(ID_INC_COL, i.getId()));
         System.out.println(delete);
         ResultSet result = session.execute(delete);
     }
@@ -142,7 +173,7 @@ public class CassandraDAO implements DaoImpl {
     @Override
     public Empleado getEmpleadoByNusuario(String nUsuario) {
         Session session = cassandraConnector.getSession();
-        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA);
+        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_EMPLEADO);
         Select.Where selectWhere = selectQuery.where();
         Clause clause = QueryBuilder.eq(NUSUARIO_COL, nUsuario);
         selectWhere.and(clause).limit(1);

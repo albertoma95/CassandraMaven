@@ -20,6 +20,10 @@ public class Empleado {
     public Empleado() {
     }
     
+    public Empleado(String nusuario) {
+        this.nusuario = nusuario;
+    }
+    
     public Empleado(String nusuario, String nombre, String apellido, int edad, String password) {
         this.nusuario = nusuario;
         this.nombre = nombre;

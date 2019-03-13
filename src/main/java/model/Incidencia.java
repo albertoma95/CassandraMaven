@@ -21,6 +21,9 @@ public class Incidencia {
     private Date fecha;
     private boolean urgente;
 
+    public Incidencia() {
+    }
+    
     public Incidencia(Empleado origen, Empleado destino, String descripcion, int estado, Date fecha, boolean urgente) {
         this.descripcion = descripcion;
         this.destino = destino;
