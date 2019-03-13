@@ -22,8 +22,18 @@ public class Cassandra {
      */
     public static void main(String[] args) {
         incidenciasController = IncidenciasController.getInstance();
+        MetodosVista metodosVista = MetodosVista.getInstance();
+        int indice;
+        Empleado empleadoSesion = null;
+//        do{
+//          try{
+//              
+//          }catch(Exception ex) {
+//              System.out.println(ex.getMessage());
+//          }  
+//        }while(indice!=0);
         
-        // incidenciasController.deleteEmpleado("amanzano");
+         //incidenciasController.deleteEmpleado("amanzano");
     }
     
     
