@@ -6,6 +6,7 @@
 package cassandra;
 
 import controller.IncidenciasController;
+import exceptions.Exceptions;
 import model.Empleado;
 import model.Incidencia;
 
@@ -16,35 +17,69 @@ import model.Incidencia;
 public class Cassandra {
 
     private static IncidenciasController incidenciasController;
-    
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         incidenciasController = IncidenciasController.getInstance();
         MetodosVista metodosVista = MetodosVista.getInstance();
+        InputAsker inputAsker = InputAsker.getInstance();
         int indice;
         Empleado empleadoSesion = null;
-//        do{
-//          try{
-//              
-//          }catch(Exception ex) {
-//              System.out.println(ex.getMessage());
-//          }  
-//        }while(indice!=0);
-        
-         //incidenciasController.deleteEmpleado("amanzano");
+        do {
+            indice = metodosVista.MostrarMenu(empleadoSesion);
+            try {
+                if (empleadoSesion == null) {
+                    if ((indice < 0) || (indice > 2)) {
+                        throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                    }
+                    if (indice == 1) {
+                        //hacer login
+                    }
+                } else {
+                    //resto de opciones
+                    int max = empleadoSesion.equals("amanzano") ? 9 : 5;
+                    if ((indice < 0) || (indice > max)) {
+                        throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                    }
+                    switch (indice) {
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
+                        case 6:
+                            //crear nuevo empleado
+                            Empleado nuevoEmpleado = inputAsker.askNewEmpleado();
+                            incidenciasController.insertEmpleado(nuevoEmpleado);
+                            break;
+                        case 7:
+                            break;
+                        case 8:
+                            break;
+                        case 9:
+                            break;
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        } while (indice != 0);
+        System.out.println("Adiós");
     }
-    
-    
-    private void createEmpleado() {
-        Empleado empleado = InputAsker.askNewEmpleado();
-        incidenciasController.insertEmpleado(empleado);
-    }
-    
-    private void createIncidencia() {
-        Empleado origen = new Empleado("", "", "", 0, "");
-        Incidencia incidencia = InputAsker.askNewIncidencia(origen);
-        incidenciasController.insertIncidencia(incidencia);
-    }
+
+//    private void createEmpleado() {
+//        Empleado empleado = InputAsker.askNewEmpleado();
+//        incidenciasController.insertEmpleado(empleado);
+//    }
+//
+//    private void createIncidencia() {
+//        Empleado origen = new Empleado("", "", "", 0, "");
+//        Incidencia incidencia = InputAsker.askNewIncidencia(origen);
+//        incidenciasController.insertIncidencia(incidencia);
+//    }
 }

@@ -27,12 +27,18 @@ public class MetodosVista {
         if (empleado == null) {
             System.out.println("1.Iniciar Sesión");
         } else {
-            System.out.println("2.Crear usuario");
-            System.out.println("3.Editar usuario");
-            System.out.println("4.Borrar usuario");
-            System.out.println("5.Mostrar Incidencias");
-            System.out.println("6.Borrar Incidencia");
-            System.out.println("4.Editar Incidencia");
+            //todos pueden ver
+            System.out.println("2.Editar perfil");
+            System.out.println("3.Mostrar Incidencias");
+            System.out.println("4.Borrar Incidencia");
+            System.out.println("5.Editar Incidencia");
+            if (empleado.getNusuario().equals("amanzano")) {
+                //cosas admin
+                System.out.println("6.Crear empleado");
+                System.out.println("7.Borrar empleado");
+                System.out.println("8.Ranking");
+                System.out.println("9.Ultimo login");
+            }
         }
         System.out.println("0.Salir");
         int indice = EntradaDatos.pedirEntero("");
