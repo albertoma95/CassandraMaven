@@ -6,7 +6,9 @@
 package cassandra;
 
 import controller.IncidenciasController;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import model.Empleado;
 import model.Incidencia;
 import ocutilidades.EntradaDatos;
@@ -26,6 +28,15 @@ public class InputAsker {
             inputAsker = new InputAsker();
         }
         return inputAsker;
+    }
+
+    public static List<String> askLogin() {
+        List<String> nUsuarioPassword = new ArrayList<>();
+        String nusuario = EntradaDatos.pedirCadena("Introduce el nombre de usuario");
+        String password = EntradaDatos.pedirCadena("Introduce tu contraseña");
+        nUsuarioPassword.add(nusuario);
+        nUsuarioPassword.add(password);
+        return nUsuarioPassword;
     }
 
     public static Empleado askNewEmpleado() {

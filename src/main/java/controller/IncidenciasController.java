@@ -18,13 +18,14 @@ public class IncidenciasController {
 
     private static IncidenciasController incidenciasController;
     private CassandraDAO cassandraDAO;
-    
-     public static IncidenciasController getInstance() {
-        if(incidenciasController == null)
+
+    public static IncidenciasController getInstance() {
+        if (incidenciasController == null) {
             incidenciasController = new IncidenciasController();
+        }
         return incidenciasController;
     }
-    
+
     public IncidenciasController() {
         cassandraDAO = CassandraDAO.getInstance();
     }
@@ -32,18 +33,27 @@ public class IncidenciasController {
     public void insertEmpleado(Empleado empleado) {
         cassandraDAO.saveOrUpdateEmpleado(empleado);
     }
-    
-    public void insertIncidencia(Incidencia incidencia){
+
+    public void insertIncidencia(Incidencia incidencia) {
         cassandraDAO.insertOrUpdateIncidencia(incidencia);
-        
+
     }
 
     public void deleteEmpleado(String nusuario) {
         Empleado empleado = new Empleado(nusuario, "", "", 0, "");
         cassandraDAO.removeEmpleado(empleado);
-    }    
+    }
 
-    public void checkNUsuario(String nusuario) {
-        cassandraDAO.getEmpleadoByNusuario(nusuario);
+    public Empleado checkNUsuario(String nusuario) {
+        return cassandraDAO.getEmpleadoByNusuario(nusuario);
+    }
+
+    public Empleado iniciarSesion(String nusuario, String password) {
+        Empleado empleado = null;
+        if (cassandraDAO.loginEmpleado(nusuario, password)) {
+            //existe, nos traemos el empleado
+            empleado = cassandraDAO.getEmpleadoByNusuario(nusuario);
+        }
+        return empleado;
     }
 }

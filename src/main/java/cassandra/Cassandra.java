@@ -7,6 +7,7 @@ package cassandra;
 
 import controller.IncidenciasController;
 import exceptions.Exceptions;
+import java.util.List;
 import model.Empleado;
 import model.Incidencia;
 
@@ -36,6 +37,8 @@ public class Cassandra {
                     }
                     if (indice == 1) {
                         //hacer login
+                        List<String> nUsuarioPassword = inputAsker.askLogin();
+                        empleadoSesion = incidenciasController.iniciarSesion(nUsuarioPassword.get(1), nUsuarioPassword.get(1));
                     }
                 } else {
                     //resto de opciones
@@ -45,6 +48,8 @@ public class Cassandra {
                     }
                     switch (indice) {
                         case 2:
+                            //editar perfil
+
                             break;
                         case 3:
                             break;
