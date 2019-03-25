@@ -15,24 +15,14 @@ import java.util.List;
 public class Exceptions extends Exception{
     
     public static final int OPCION_INCORRECTA = 0;
+    public static final int NUSUARIO_PASSWORD_INCORRECTO = 1;
     
     
     private int codigo;
 
     private final List<String> mensajes = Arrays.asList(
-            "El usuario no existe",
-            "Opción incorrecta",
-            "Nombre demasiado largo",
-            "Apellido demasiado largo",
-            "Dni incorrecto",
-            "Codigo postal incorrecto",
-            "Numero de telefono incorrecto",
-            "Numero de mascotas incorrecto",
-            "Matrícula incorrecta",
-            "Contraseña inadecuada",
-            "Tipo de usuario incorrecto",
-            "Este usuario ya existe",
-            "No puedes boirrarte a tí mismo"
+            "Opcion incorrecta",
+            "Nombre de usuario o password incorrecto"
     );
 
     public Exceptions(int codigo) {

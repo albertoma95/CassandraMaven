@@ -38,7 +38,11 @@ public class Cassandra {
                     if (indice == 1) {
                         //hacer login
                         List<String> nUsuarioPassword = inputAsker.askLogin();
-                        empleadoSesion = incidenciasController.iniciarSesion(nUsuarioPassword.get(1), nUsuarioPassword.get(1));
+                        empleadoSesion = incidenciasController.iniciarSesion(nUsuarioPassword.get(0), nUsuarioPassword.get(1));
+                        if(empleadoSesion == null){
+                            throw new Exceptions(Exceptions.NUSUARIO_PASSWORD_INCORRECTO);
+                        }
+                        System.out.println("Bienvenido "+empleadoSesion.getNombre());
                     }
                 } else {
                     //resto de opciones
@@ -49,7 +53,7 @@ public class Cassandra {
                     switch (indice) {
                         case 2:
                             //editar perfil
-
+                            incidenciasController.editarEmpleado(empleadoSesion);
                             break;
                         case 3:
                             break;

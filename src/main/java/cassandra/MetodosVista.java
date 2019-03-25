@@ -44,4 +44,13 @@ public class MetodosVista {
         int indice = EntradaDatos.pedirEntero("");
         return indice;
     }
+    public int mostrarOpciones(){
+        System.out.println("1.Apellido");
+        System.out.println("2.Edad");
+        System.out.println("3.Nombre");
+        System.out.println("4.Contraseña");
+        System.out.println("0.Atrás");
+        int indice = EntradaDatos.pedirEntero("");
+        return indice;
+    }
 }

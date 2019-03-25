@@ -75,6 +75,7 @@ public class CassandraDAO implements DaoImpl {
         .and(eq(PASSWORD_COL, password));
         
         Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_EMPLEADO);
+        selectQuery.allowFiltering();
         Select.Where selectWhere = selectQuery.where();
         Clause clause = QueryBuilder.eq(NUSUARIO_COL, nusuario);
         Clause clause2 = QueryBuilder.eq(PASSWORD_COL, password);
