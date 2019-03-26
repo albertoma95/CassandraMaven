@@ -20,6 +20,7 @@ import ocutilidades.EntradaDatos;
 public class InputAsker {
 
     private static IncidenciasController incidenciasController = IncidenciasController.getInstance();
+    private static MetodosVista metodosVista = MetodosVista.getInstance();
 
     public static InputAsker inputAsker;
 
@@ -50,9 +51,15 @@ public class InputAsker {
     }
 
     public static Incidencia askNewIncidencia(Empleado origen) {
-        String descripcion = "";
-        int estado = 0;
-        boolean urgente = false;
-        return new Incidencia(origen, null, descripcion, estado, new Date(), urgente);
+        Incidencia incidencia = null;
+        //hay que elgir a quien es el que la recibe
+        Empleado destino = metodosVista.selectEmpleado(origen);
+        if (destino != null) {
+            String descripcion = EntradaDatos.pedirCadena("Introduce una descripción");
+            int estado = 0;
+            boolean urgente = false;
+            return incidencia = new Incidencia(origen, destino, descripcion, estado, new Date(), urgente);
+        }
+        return incidencia;
     }
 }

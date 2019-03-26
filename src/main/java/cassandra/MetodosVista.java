@@ -18,14 +18,12 @@ import ocutilidades.EntradaDatos;
  * @author Alberto
  */
 public class MetodosVista {
-    
+
     private static IncidenciasController incidenciasController;
 
     public MetodosVista() {
         incidenciasController = IncidenciasController.getInstance();
     }
-    
-    
 
     public static MetodosVista metodosVista;
 
@@ -35,8 +33,6 @@ public class MetodosVista {
         }
         return metodosVista;
     }
-    
-    
 
     public int MostrarMenu(Empleado empleado) {
         if (empleado == null) {
@@ -44,15 +40,16 @@ public class MetodosVista {
         } else {
             //todos pueden ver
             System.out.println("2.Editar perfil");
-            System.out.println("3.Mostrar Incidencias");
-            System.out.println("4.Borrar Incidencia");
-            System.out.println("5.Editar Incidencia");
+            System.out.println("3.Crear Incidencia");
+            System.out.println("4.Mostrar Incidencias");
+            System.out.println("5.Borrar Incidencia");
+            System.out.println("6.Editar Incidencia");
             if (empleado.getNusuario().equals("amanzano")) {
                 //cosas admin
-                System.out.println("6.Crear empleado");
-                System.out.println("7.Borrar empleado");
-                System.out.println("8.Ranking");
-                System.out.println("9.Ultimo login");
+                System.out.println("7.Crear empleado");
+                System.out.println("8.Borrar empleado");
+                System.out.println("9.Ranking");
+                System.out.println("10.Ultimo login");
             }
         }
         System.out.println("0.Salir");
@@ -80,7 +77,6 @@ public class MetodosVista {
                 contador += 1;
             }
         }
-        System.out.println("0.Salir");
         int indice = EntradaDatos.pedirEntero("");
         return indice;
     }
@@ -117,19 +113,21 @@ public class MetodosVista {
             incidenciasController.editarEmpleado(empleado);
         } while (indice != 0);
     }
-    
-    public void selectEmpleadoAndRemove(){
+
+    public Empleado selectEmpleado(Empleado empleado) {
+        Empleado empleadoEliminar = null;
         int indice;
         do {
             List<Empleado> empleados = incidenciasController.getAllEmpleados();
             //el master de la app no debe poder borrarse a si mismo
             Iterator<Empleado> itr = empleados.iterator();
             while (itr.hasNext()) {
-                if (itr.next().getNusuario().equals("amanzano")) {
+                if (itr.next().getNusuario().equals(empleado.getNusuario())) {
                     itr.remove();
                 }
             }
             indice = mostrarEmpleados(empleados);
+            System.out.println("0.Salir");
             if (indice < 0 || (indice > empleados.size())) {
                 try {
                     throw new Exceptions(Exceptions.OPCION_INCORRECTA);
@@ -138,10 +136,10 @@ public class MetodosVista {
                 }
             }
             if (indice != 0) {
-                Empleado empleadoEliminar = empleados.get(indice - 1);
-                incidenciasController.deleteEmpleado(empleadoEliminar);
+                return empleadoEliminar = empleados.get(indice - 1);
             }
-            
+
         } while (indice != 0);
+        return empleadoEliminar;
     }
 }

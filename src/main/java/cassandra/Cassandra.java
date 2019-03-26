@@ -16,7 +16,7 @@ import model.Incidencia;
  * @author Alberto
  */
 public class Cassandra {
-
+    
     private static IncidenciasController incidenciasController;
 
     /**
@@ -46,7 +46,7 @@ public class Cassandra {
                     }
                 } else {
                     //resto de opciones
-                    int max = empleadoSesion.getNusuario().equals("amanzano") ? 9 : 5;
+                    int max = empleadoSesion.getNusuario().equals("amanzano") ? 10 : 6;
                     if ((indice < 0) || (indice > max)) {
                         throw new Exceptions(Exceptions.OPCION_INCORRECTA);
                     }
@@ -54,26 +54,37 @@ public class Cassandra {
                         case 2:
                             //editar perfil
                             metodosVista.editarEmpleado(empleadoSesion);
-                            System.out.println(empleadoSesion.getEdad());
                             break;
                         case 3:
+                            //crear incidencia
+                            Incidencia nuevaIncidencia = inputAsker.askNewIncidencia(empleadoSesion);
+                            if (nuevaIncidencia != null) {
+                                //creamos la incidencia
+                                incidenciasController.insertIncidencia(nuevaIncidencia);
+                            }
                             break;
                         case 4:
                             break;
                         case 5:
                             break;
                         case 6:
+                            
+                            break;
+                        case 7:
                             //crear nuevo empleado
                             Empleado nuevoEmpleado = inputAsker.askNewEmpleado();
                             incidenciasController.insertEmpleado(nuevoEmpleado);
                             break;
-                        case 7:
-                            //borrar empleado
-                            metodosVista.selectEmpleadoAndRemove();
-                            break;
                         case 8:
+                            //borrar empleado
+                            Empleado empleadoEliminar = metodosVista.selectEmpleado(empleadoSesion);
+                            if (empleadoEliminar != null) {
+                                incidenciasController.deleteEmpleado(empleadoEliminar);
+                            }
                             break;
                         case 9:
+                            break;
+                        case 10:
                             break;
                     }
                 }
