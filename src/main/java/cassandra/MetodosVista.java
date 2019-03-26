@@ -6,6 +6,8 @@
 package cassandra;
 
 import controller.IncidenciasController;
+import exceptions.Exceptions;
+import java.util.HashMap;
 import java.util.List;
 import model.Empleado;
 import ocutilidades.EntradaDatos;
@@ -59,12 +61,49 @@ public class MetodosVista {
 
     public int mostrarEmpleados(List<Empleado> empleados) {
         int contador = 1;
-        for (Empleado empleado : empleados) {
-            System.out.println(contador + ": " + empleado.getNusuario());
-            contador += 1;
+        if (empleados.isEmpty()) {
+            System.out.println("No hay empleados a los que eliminar");
+        } else {
+            for (Empleado empleado : empleados) {
+                System.out.println(contador + ": " + empleado.getNusuario());
+                contador += 1;
+            }
         }
         System.out.println("0.Salir");
         int indice = EntradaDatos.pedirEntero("");
         return indice;
+    }
+
+    public Empleado editarEmpleado(Empleado empleado) {
+        int indice;
+        do {
+            indice = metodosVista.mostrarOpciones();
+            switch (indice) {
+                case 1:
+                    String apellido = EntradaDatos.pedirCadena("Introduce el apellido");
+                    empleado.setApellido(apellido);
+                    break;
+                case 2:
+                    int edad = EntradaDatos.pedirEntero("Introduce la edad");
+                    empleado.setEdad(edad);
+                    break;
+                case 3:
+                    String nombre = EntradaDatos.pedirCadena("Introduce nombre");
+                    empleado.setNombre(nombre);
+                    break;
+                case 4:
+                    String contra = EntradaDatos.pedirCadena("Introduce contraseña");
+                    empleado.setPassword(contra);
+                    break;
+                default: {
+                    try {
+                        throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                    } catch (Exceptions ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+            return empleado;
+        } while (indice != 0);
     }
 }
