@@ -8,6 +8,8 @@ package controller;
 import cassandra.MetodosVista;
 import exceptions.Exceptions;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Empleado;
@@ -55,6 +57,34 @@ public class IncidenciasController {
         return cassandraDAO.getEmpleadoByNusuario(nusuario);
     }
 
+    public List<Empleado> getAllEmpleados() {
+        return cassandraDAO.selectAllEmpleado();
+    }
+
+    public void selectEmpleadoAndRemove() throws Exceptions {
+        int indice;
+        do {
+            List<Empleado> empleados = cassandraDAO.selectAllEmpleado();
+            //el master de la app no debe poder borrarse a si mismo
+            Iterator<Empleado> itr = empleados.iterator();
+            while (itr.hasNext()) {
+                if (itr.next().getNusuario().equals("amanzano")) {
+                    itr.remove();
+                }
+            }
+
+            indice = metodosVista.mostrarEmpleados(empleados); //mostrar todos los de la base e datos menos el usuario master
+            if (indice < 0 || (indice > empleados.size())) {
+                throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+            }
+            if (indice != 0) {
+                Empleado empleadoEliminar = empleados.get(indice - 1);
+                cassandraDAO.removeEmpleado(empleadoEliminar);
+            }
+
+        } while (indice != 0);
+    }
+
     public void editarEmpleado(Empleado empleado) {
         int indice;
         do {
@@ -84,7 +114,7 @@ public class IncidenciasController {
                     try {
                         throw new Exceptions(Exceptions.OPCION_INCORRECTA);
                     } catch (Exceptions ex) {
-                        
+
                         //esto es provisional
                         System.out.println(ex.getMessage());
                     }

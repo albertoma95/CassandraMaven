@@ -39,14 +39,14 @@ public class Cassandra {
                         //hacer login
                         List<String> nUsuarioPassword = inputAsker.askLogin();
                         empleadoSesion = incidenciasController.iniciarSesion(nUsuarioPassword.get(0), nUsuarioPassword.get(1));
-                        if(empleadoSesion == null){
+                        if (empleadoSesion == null) {
                             throw new Exceptions(Exceptions.NUSUARIO_PASSWORD_INCORRECTO);
                         }
-                        System.out.println("Bienvenido "+empleadoSesion.getNombre());
+                        System.out.println("Bienvenido " + empleadoSesion.getNombre());
                     }
                 } else {
                     //resto de opciones
-                    int max = empleadoSesion.equals("amanzano") ? 9 : 5;
+                    int max = empleadoSesion.getNusuario().equals("amanzano") ? 9 : 5;
                     if ((indice < 0) || (indice > max)) {
                         throw new Exceptions(Exceptions.OPCION_INCORRECTA);
                     }
@@ -67,6 +67,8 @@ public class Cassandra {
                             incidenciasController.insertEmpleado(nuevoEmpleado);
                             break;
                         case 7:
+                            //borrar empleado
+                            incidenciasController.selectEmpleadoAndRemove();
                             break;
                         case 8:
                             break;
@@ -74,7 +76,7 @@ public class Cassandra {
                             break;
                     }
                 }
-            } catch (Exception ex) {
+            } catch (Exceptions ex) {
                 System.out.println(ex.getMessage());
             }
         } while (indice != 0);

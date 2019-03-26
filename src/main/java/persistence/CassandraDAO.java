@@ -16,6 +16,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import com.datastax.driver.core.querybuilder.Select;
 import config.CassandraConnector;
+import java.util.ArrayList;
 import java.util.List;
 import model.Empleado;
 import model.Historial;
@@ -70,10 +71,10 @@ public class CassandraDAO implements DaoImpl {
     public boolean loginEmpleado(String nusuario, String password) {
         Session session = cassandraConnector.getSession();
         Statement s = QueryBuilder.select().all()
-        .from(NOMBRE_TABLA_EMPLEADO)
-        .where(eq(NUSUARIO_COL, nusuario))
-        .and(eq(PASSWORD_COL, password));
-        
+                .from(NOMBRE_TABLA_EMPLEADO)
+                .where(eq(NUSUARIO_COL, nusuario))
+                .and(eq(PASSWORD_COL, password));
+
         Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_EMPLEADO);
         selectQuery.allowFiltering();
         Select.Where selectWhere = selectQuery.where();
@@ -96,15 +97,17 @@ public class CassandraDAO implements DaoImpl {
 
     @Override
     public Incidencia getIncidenciaById(int id) {
-       Session session = cassandraConnector.getSession();
+        Session session = cassandraConnector.getSession();
         Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA);
         Select.Where selectWhere = selectQuery.where();
         Clause clause = QueryBuilder.eq(ID_INC_COL, id);
         selectWhere.and(clause).limit(1);
         ResultSet results = session.execute(selectQuery);
         Row row = results.one();
-        if(row == null) return null;
-        
+        if (row == null) {
+            return null;
+        }
+
         Incidencia incidencia = new Incidencia();
         incidencia.setId(row.getInt(ID_INC_COL));
         incidencia.setOrigen(new Empleado(row.getString(ORIGEN_COL)));
@@ -121,6 +124,24 @@ public class CassandraDAO implements DaoImpl {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public List<Empleado> selectAllEmpleado() {
+        List<Empleado> empleados = new ArrayList<>();
+        Session session = cassandraConnector.getSession();
+        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_EMPLEADO);
+        ResultSet results = session.execute(selectQuery);
+        List<Row> rows = results.all();
+        for (Row row : rows) {
+            Empleado empleado = new Empleado();
+            empleado.setNusuario(row.getString(NUSUARIO_COL));
+            empleado.setNombre(row.getString(NOMBRE_COL));
+            empleado.setApellido(row.getString(APELLIDO_COL));
+            empleado.setPassword(row.getString(PASSWORD_COL));
+            empleado.setEdad(row.getInt(EDAD_COL));
+            empleados.add(empleado);
+        }
+        return empleados;
+    }
+
     @Override
     public void insertOrUpdateIncidencia(Incidencia i) {
         Session session = cassandraConnector.getSession();
@@ -135,9 +156,9 @@ public class CassandraDAO implements DaoImpl {
         System.out.println(insert.toString());
         ResultSet result = session.execute(insert.toString());
     }
-    
+
     @Override
-    public void removeIncidencia(Incidencia i){
+    public void removeIncidencia(Incidencia i) {
         Session session = cassandraConnector.getSession();
         Delete.Where delete = QueryBuilder.delete()
                 .from(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA)
@@ -180,8 +201,10 @@ public class CassandraDAO implements DaoImpl {
         selectWhere.and(clause).limit(1);
         ResultSet results = session.execute(selectQuery);
         Row row = results.one();
-        if(row == null) return null;
-        
+        if (row == null) {
+            return null;
+        }
+
         Empleado empleado = new Empleado();
         empleado.setNusuario(row.getString(NUSUARIO_COL));
         empleado.setNombre(row.getString(NOMBRE_COL));
