@@ -53,8 +53,8 @@ public class Cassandra {
                     switch (indice) {
                         case 2:
                             //editar perfil
-                            empleadoSesion = metodosVista.editarEmpleado(empleadoSesion);
-                            incidenciasController.editarEmpleado(empleadoSesion);
+                            metodosVista.editarEmpleado(empleadoSesion);
+                            System.out.println(empleadoSesion.getEdad());
                             break;
                         case 3:
                             break;
@@ -69,7 +69,7 @@ public class Cassandra {
                             break;
                         case 7:
                             //borrar empleado
-                            incidenciasController.selectEmpleadoAndRemove();
+                            metodosVista.selectEmpleadoAndRemove();
                             break;
                         case 8:
                             break;

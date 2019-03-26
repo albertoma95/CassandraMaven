@@ -8,6 +8,7 @@ package cassandra;
 import controller.IncidenciasController;
 import exceptions.Exceptions;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import model.Empleado;
 import ocutilidades.EntradaDatos;
@@ -17,6 +18,14 @@ import ocutilidades.EntradaDatos;
  * @author Alberto
  */
 public class MetodosVista {
+    
+    private static IncidenciasController incidenciasController;
+
+    public MetodosVista() {
+        incidenciasController = IncidenciasController.getInstance();
+    }
+    
+    
 
     public static MetodosVista metodosVista;
 
@@ -26,6 +35,8 @@ public class MetodosVista {
         }
         return metodosVista;
     }
+    
+    
 
     public int MostrarMenu(Empleado empleado) {
         if (empleado == null) {
@@ -74,7 +85,7 @@ public class MetodosVista {
         return indice;
     }
 
-    public Empleado editarEmpleado(Empleado empleado) {
+    public void editarEmpleado(Empleado empleado) {
         int indice;
         do {
             indice = metodosVista.mostrarOpciones();
@@ -103,7 +114,34 @@ public class MetodosVista {
                     }
                 }
             }
-            return empleado;
+            incidenciasController.editarEmpleado(empleado);
+        } while (indice != 0);
+    }
+    
+    public void selectEmpleadoAndRemove(){
+        int indice;
+        do {
+            List<Empleado> empleados = incidenciasController.getAllEmpleados();
+            //el master de la app no debe poder borrarse a si mismo
+            Iterator<Empleado> itr = empleados.iterator();
+            while (itr.hasNext()) {
+                if (itr.next().getNusuario().equals("amanzano")) {
+                    itr.remove();
+                }
+            }
+            indice = mostrarEmpleados(empleados);
+            if (indice < 0 || (indice > empleados.size())) {
+                try {
+                    throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                } catch (Exceptions ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+            if (indice != 0) {
+                Empleado empleadoEliminar = empleados.get(indice - 1);
+                incidenciasController.deleteEmpleado(empleadoEliminar);
+            }
+            
         } while (indice != 0);
     }
 }

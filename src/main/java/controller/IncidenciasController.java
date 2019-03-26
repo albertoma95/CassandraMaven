@@ -25,7 +25,6 @@ public class IncidenciasController {
     
     private static IncidenciasController incidenciasController;
     private CassandraDAO cassandraDAO;
-    private MetodosVista metodosVista;
     
     public static IncidenciasController getInstance() {
         if (incidenciasController == null) {
@@ -36,7 +35,6 @@ public class IncidenciasController {
     
     public IncidenciasController() {
         cassandraDAO = CassandraDAO.getInstance();
-        metodosVista = MetodosVista.getInstance();
     }
     
     public void insertEmpleado(Empleado empleado) {
@@ -48,8 +46,7 @@ public class IncidenciasController {
         
     }
     
-    public void deleteEmpleado(String nusuario) {
-        Empleado empleado = new Empleado(nusuario, "", "", 0, "");
+    public void deleteEmpleado(Empleado empleado) {
         cassandraDAO.removeEmpleado(empleado);
     }
     
@@ -59,33 +56,6 @@ public class IncidenciasController {
     
     public List<Empleado> getAllEmpleados() {
         return cassandraDAO.selectAllEmpleado();
-    }
-    
-    public void selectEmpleadoAndRemove() {
-        int indice;
-        do {
-            List<Empleado> empleados = cassandraDAO.selectAllEmpleado();
-            //el master de la app no debe poder borrarse a si mismo
-            Iterator<Empleado> itr = empleados.iterator();
-            while (itr.hasNext()) {
-                if (itr.next().getNusuario().equals("amanzano")) {
-                    itr.remove();
-                }
-            }
-            indice = metodosVista.mostrarEmpleados(empleados);
-            if (indice < 0 || (indice > empleados.size())) {
-                try {
-                    throw new Exceptions(Exceptions.OPCION_INCORRECTA);
-                } catch (Exceptions ex) {
-                    Logger.getLogger(IncidenciasController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (indice != 0) {
-                Empleado empleadoEliminar = empleados.get(indice - 1);
-                cassandraDAO.removeEmpleado(empleadoEliminar);
-            }
-            
-        } while (indice != 0);
     }
     
     public void editarEmpleado(Empleado empleado) {
