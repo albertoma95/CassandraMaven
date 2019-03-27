@@ -7,14 +7,12 @@ package cassandra;
 
 import controller.IncidenciasController;
 import exceptions.Exceptions;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Empleado;
 import model.Incidencia;
 import ocutilidades.EntradaDatos;
+import utilities.MyUtilities;
 
 /**
  *
@@ -23,9 +21,11 @@ import ocutilidades.EntradaDatos;
 public class MetodosVista {
 
     private static IncidenciasController incidenciasController;
+    private static MyUtilities myUtilities;
 
     public MetodosVista() {
         incidenciasController = IncidenciasController.getInstance();
+        myUtilities = MyUtilities.getInstance();
     }
 
     public static MetodosVista metodosVista;
@@ -87,7 +87,7 @@ public class MetodosVista {
     public void editarEmpleado(Empleado empleado) {
         int indice;
         do {
-            indice = metodosVista.mostrarOpciones();
+            indice = mostrarOpciones();
             switch (indice) {
                 case 1:
                     String apellido = EntradaDatos.pedirCadena("Introduce el apellido");
@@ -157,7 +157,13 @@ public class MetodosVista {
                 case 1:
                     //origen
                     List<Incidencia> incidencias = incidenciasController.getIncidenciaOrigen(empleadoSesion);
-                    System.out.println(incidencias.size());
+                    for(Incidencia incidencia: incidencias){
+                        System.out.println("Destino: "+incidencia.getDestino().getNusuario());
+                        System.out.println("Estado: "+incidencia.getEstado());
+                        System.out.println("Descripción: "+incidencia.getDescripcion());
+                        System.out.println("Urgente: "+incidencia.isUrgente());
+                        System.out.println("Fecha: "+ myUtilities.dateToString(incidencia.getFecha()));
+                    }
                     break;
                 case 2:
                     //destino
