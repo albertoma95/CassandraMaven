@@ -10,7 +10,10 @@ import exceptions.Exceptions;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Empleado;
+import model.Incidencia;
 import ocutilidades.EntradaDatos;
 
 /**
@@ -141,5 +144,33 @@ public class MetodosVista {
 
         } while (indice != 0);
         return empleadoEliminar;
+    }
+
+    public void mostrarIncidencia(Empleado empleadoSesion) {
+        int indice;
+        do {
+            System.out.println("1.Incidencias que eres origen");
+            System.out.println("2.Incidencias que eres destino");
+            System.out.println("0.Salir");
+            indice = EntradaDatos.pedirEntero("");
+            switch (indice) {
+                case 1:
+                    //origen
+                    List<Incidencia> incidencias = incidenciasController.getIncidenciaOrigen(empleadoSesion);
+                    System.out.println(incidencias.size());
+                    break;
+                case 2:
+                    //destino
+                    
+                    break;
+                default: {
+                    try {
+                        throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                    } catch (Exceptions ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        } while (indice != 0);
     }
 }

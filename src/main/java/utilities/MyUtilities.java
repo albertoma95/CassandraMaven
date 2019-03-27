@@ -18,6 +18,15 @@ import java.util.logging.Logger;
  */
 public class MyUtilities {
     
+    private static MyUtilities myUtilities;
+    
+    public static MyUtilities getInstance() {
+        if (myUtilities == null) {
+            myUtilities = new MyUtilities();
+        }
+        return myUtilities;
+    }
+    
     public static Date stringToDate(String strDate) {
         try {
             SimpleDateFormat formatter =new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");  

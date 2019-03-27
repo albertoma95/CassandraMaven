@@ -64,6 +64,8 @@ public class Cassandra {
                             }
                             break;
                         case 4:
+                            //mostrar incidencia las que eres origen y tambien las que eres destino
+                            metodosVista.mostrarIncidencia(empleadoSesion);
                             break;
                         case 5:
                             break;

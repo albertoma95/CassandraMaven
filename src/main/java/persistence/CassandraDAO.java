@@ -5,6 +5,7 @@
  */
 package persistence;
 
+import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
@@ -17,6 +18,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import com.datastax.driver.core.querybuilder.Select;
 import config.CassandraConnector;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import model.Empleado;
 import model.Historial;
@@ -145,11 +147,12 @@ public class CassandraDAO implements DaoImpl {
     @Override
     public void insertOrUpdateIncidencia(Incidencia i) {
         Session session = cassandraConnector.getSession();
+        LocalDate fecha = LocalDate.fromDaysSinceEpoch((int) i.getFecha().getTime());
         Insert insert = QueryBuilder.insertInto(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA)
                 .value(ID_INC_COL, i.getId())
                 .value(ORIGEN_COL, i.getOrigen().getNusuario())
                 .value(DESTINO_COL, i.getDestino().getNusuario())
-                .value(FECHA_COL, i.getFecha())
+                .value(FECHA_COL, fecha)
                 .value(ESTADO_COL, i.getEstado())
                 .value(DESCRIPCION_COL, i.getDescripcion())
                 .value(URGENTE_COL, i.isUrgente());
@@ -174,7 +177,27 @@ public class CassandraDAO implements DaoImpl {
 
     @Override
     public List<Incidencia> getIncidenciaByOrigen(Empleado e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Incidencia> incidencias = new ArrayList<>();
+        Session session = cassandraConnector.getSession();
+        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA);
+        selectQuery.allowFiltering();
+        Select.Where selectWhere = selectQuery.where();
+        Clause clause = QueryBuilder.eq(ORIGEN_COL, e.getNusuario());
+        selectWhere.and(clause);
+        ResultSet results = session.execute(selectQuery);
+        List<Row> rows = results.all();
+        for (Row row : rows) {
+            Incidencia incidencia = new Incidencia();
+            incidencia.setDescripcion(row.getString(DESCRIPCION_COL));
+            incidencia.setOrigen(e);
+            incidencia.setDestino(getEmpleadoByNusuario(row.getString(DESTINO_COL)));
+            incidencia.setEstado(row.getInt(ESTADO_COL));
+            incidencia.setUrgente(row.getBool(URGENTE_COL));
+            Date fecha = new Date(row.getDate(FECHA_COL).getMillisSinceEpoch());
+            incidencia.setFecha(fecha);
+            incidencias.add(incidencia);
+        }
+        return incidencias;
     }
 
     @Override

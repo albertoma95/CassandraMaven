@@ -70,4 +70,8 @@ public class IncidenciasController {
         }
         return empleado;
     }
+    
+    public List<Incidencia> getIncidenciaOrigen(Empleado empleadoSesion){
+        return cassandraDAO.getIncidenciaByOrigen(empleadoSesion);
+    }
 }
