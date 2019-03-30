@@ -79,7 +79,7 @@ public class Cassandra {
                             //editar incidencia
                             Incidencia incidenciaEditar = metodosVista.selectIncidencia(empleadoSesion);
                             if(incidenciaEditar!= null){
-                                
+                                metodosVista.editarIncidencia(incidenciaEditar, empleadoSesion);
                             }
                             break;
                         case 7:

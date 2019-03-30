@@ -65,6 +65,9 @@ public class IncidenciasController {
     public void editarEmpleado(Empleado empleado) {
         cassandraDAO.saveOrUpdateEmpleado(empleado);
     }
+    public void editarIncidencia(Incidencia incidencia){
+        cassandraDAO.insertOrUpdateIncidencia(incidencia);
+    }
 
     public Empleado iniciarSesion(String nusuario, String password) {
         Empleado empleado = null;

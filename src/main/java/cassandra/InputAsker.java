@@ -21,6 +21,7 @@ import ocutilidades.EntradaDatos;
  * @author Alberto
  */
 public class InputAsker {
+    
 
     private static IncidenciasController incidenciasController = IncidenciasController.getInstance();
     private static MetodosVista metodosVista = MetodosVista.getInstance();
@@ -60,27 +61,32 @@ public class InputAsker {
         if (destino != null) {
             String descripcion = EntradaDatos.pedirCadena("Introduce una descripción");
             int estado = 0;
-            int indice;
-            boolean urgente = false;
-            do {
-                System.out.println("1.No urgente");
-                System.out.println("2.Urgente");
-                indice = EntradaDatos.pedirEntero("");
-                switch (indice) {
-                    case 2:
-                        urgente = true;
-                        break;
-                    default: {
-                        try {
-                            throw new Exceptions(Exceptions.OPCION_INCORRECTA);
-                        } catch (Exceptions ex) {
-                            System.out.println(ex.getMessage());
-                        }
-                    }
-                }
-            } while ((indice != 1) || (indice != 1));
+            boolean urgente = isUrgente();
             return incidencia = new Incidencia((int) (new Date().getTime() / 1000), origen, destino, descripcion, estado, new Date(), urgente);
         }
         return incidencia;
+    }
+
+    public static boolean isUrgente() {
+        int indice;
+        boolean urgente = false;
+        do {
+            System.out.println("1.No urgente");
+            System.out.println("2.Urgente");
+            indice = EntradaDatos.pedirEntero("");
+            switch (indice) {
+                case 2:
+                    urgente = true;
+                    break;
+                default: {
+                    try {
+                        throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                    } catch (Exceptions ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        } while ((indice != 1) || (indice != 1));
+        return urgente;
     }
 }

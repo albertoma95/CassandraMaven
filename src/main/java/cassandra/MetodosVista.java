@@ -8,6 +8,7 @@ package cassandra;
 import controller.IncidenciasController;
 import exceptions.Exceptions;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import model.Empleado;
@@ -23,10 +24,12 @@ public class MetodosVista {
 
     private static IncidenciasController incidenciasController;
     private static MyUtilities myUtilities;
+    private static InputAsker inputAsker;
 
     public MetodosVista() {
         incidenciasController = IncidenciasController.getInstance();
         myUtilities = MyUtilities.getInstance();
+        inputAsker = InputAsker.getInstance();
     }
 
     public static MetodosVista metodosVista;
@@ -70,13 +73,13 @@ public class MetodosVista {
         int indice = EntradaDatos.pedirEntero("");
         return indice;
     }
-    
-    public int mostrarOpcionesIncidencia(){
-        
+
+    public int mostrarOpcionesIncidencia() {
+
         System.out.println("1.Destino");
         System.out.println("2.Descripción");
         System.out.println("3.Estado");
-        System.out.println("4.Fecha");
+        System.out.println("4.Poner fecha actual");
         System.out.println("5.Urgente");
         System.out.println("0.Salir");
         int indice = EntradaDatos.pedirEntero("");
@@ -138,12 +141,66 @@ public class MetodosVista {
             incidenciasController.editarEmpleado(empleado);
         } while (indice != 0);
     }
-    public void editarIncidencia(){
+
+    public void editarIncidencia(Incidencia incidencia, Empleado empleadoSesion) {
         int indice;
-        do{
+        do {
             indice = mostrarOpcionesIncidencia();
-            
-        }while(indice!=0);
+            switch (indice) {
+                case 1:
+                    //destino
+                    Empleado destino = selectEmpleado(empleadoSesion);
+                    incidencia.setDestino(destino);
+                    break;
+                case 2:
+                    String descripcion = EntradaDatos.pedirCadena("Introduce descripción");
+                    incidencia.setDescripcion(descripcion);
+                    break;
+                case 3:
+                    //estado
+                    break;
+                case 4:
+                    //fecha
+                    Date fecha = new Date();
+                    incidencia.setFecha(fecha);
+                    break;
+                case 5:
+                    //urgente
+                    Boolean urgente = inputAsker.isUrgente();
+                    incidencia.setUrgente(urgente);
+                    break;
+                default:
+                    try {
+                        throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                    } catch (Exceptions ex) {
+                        System.out.println(ex.getMessage());
+                    }
+            }
+            incidenciasController.editarIncidencia(incidencia);
+        } while (indice != 0);
+    }
+
+    public static boolean isUrgente() {
+        int indice;
+        boolean urgente = false;
+        do {
+            System.out.println("1.No urgente");
+            System.out.println("2.Urgente");
+            indice = EntradaDatos.pedirEntero("");
+            switch (indice) {
+                case 2:
+                    urgente = true;
+                    break;
+                default: {
+                    try {
+                        throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                    } catch (Exceptions ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        } while ((indice != 1) || (indice != 1));
+        return urgente;
     }
 
     public Empleado selectEmpleado(Empleado empleado) {
@@ -224,12 +281,12 @@ public class MetodosVista {
         int indice;
         do {
             List<Incidencia> incidenciasOrigen = incidenciasController.getIncidenciaOrigenDestino(empleadoSesion, true);
-            
+
             List<Object> lista = new ArrayList<>();
             for (Incidencia inc : incidenciasOrigen) {
                 lista.add(inc);
             }
-            
+
             indice = mostrarEmpleadosIncidencias(lista);
             if (indice < 0 || (indice > incidenciasOrigen.size())) {
                 try {
@@ -241,7 +298,7 @@ public class MetodosVista {
             if (indice != 0) {
                 return incidenciaEliminar = incidenciasOrigen.get(indice - 1);
             }
-            
+
         } while (indice != 0);
 
         return incidenciaEliminar;
