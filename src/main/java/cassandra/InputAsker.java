@@ -6,9 +6,12 @@
 package cassandra;
 
 import controller.IncidenciasController;
+import exceptions.Exceptions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Empleado;
 import model.Incidencia;
 import ocutilidades.EntradaDatos;
@@ -57,8 +60,26 @@ public class InputAsker {
         if (destino != null) {
             String descripcion = EntradaDatos.pedirCadena("Introduce una descripción");
             int estado = 0;
+            int indice;
             boolean urgente = false;
-            return incidencia = new Incidencia(origen, destino, descripcion, estado, new Date(), urgente);
+            do {
+                System.out.println("1.No urgente");
+                System.out.println("2.Urgente");
+                indice = EntradaDatos.pedirEntero("");
+                switch (indice) {
+                    case 2:
+                        urgente = true;
+                        break;
+                    default: {
+                        try {
+                            throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                        } catch (Exceptions ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    }
+                }
+            } while ((indice != 1) || (indice != 1));
+            return incidencia = new Incidencia((int) (new Date().getTime() / 1000), origen, destino, descripcion, estado, new Date(), urgente);
         }
         return incidencia;
     }

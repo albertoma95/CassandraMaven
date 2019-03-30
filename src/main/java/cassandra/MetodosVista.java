@@ -7,6 +7,7 @@ package cassandra;
 
 import controller.IncidenciasController;
 import exceptions.Exceptions;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import model.Empleado;
@@ -60,7 +61,7 @@ public class MetodosVista {
         return indice;
     }
 
-    public int mostrarOpciones() {
+    public int mostrarOpcionesEmpleado() {
         System.out.println("1.Apellido");
         System.out.println("2.Edad");
         System.out.println("3.Nombre");
@@ -69,16 +70,37 @@ public class MetodosVista {
         int indice = EntradaDatos.pedirEntero("");
         return indice;
     }
+    
+    public int mostrarOpcionesIncidencia(){
+        
+        System.out.println("1.Destino");
+        System.out.println("2.Descripción");
+        System.out.println("3.Estado");
+        System.out.println("4.Fecha");
+        System.out.println("5.Urgente");
+        System.out.println("0.Salir");
+        int indice = EntradaDatos.pedirEntero("");
+        return indice;
+    }
 
-    public int mostrarEmpleados(List<Empleado> empleados) {
+    public int mostrarEmpleadosIncidencias(List<Object> lista) {
         int contador = 1;
-        if (empleados.isEmpty()) {
-            System.out.println("No hay empleados a los que eliminar");
+        if (lista.isEmpty()) {
+            System.out.println("No hay opciones");
         } else {
-            for (Empleado empleado : empleados) {
-                System.out.println(contador + ": " + empleado.getNusuario());
+            for (Object objeto : lista) {
+                if (objeto instanceof Empleado) {
+                    Empleado empleado = (Empleado) objeto;
+                    System.out.println(contador + ": " + empleado.getNusuario());
+
+                }
+                if (objeto instanceof Incidencia) {
+                    Incidencia instancia = (Incidencia) objeto;
+                    System.out.println(contador + ": " + instancia.getDescripcion());
+                }
                 contador += 1;
             }
+            System.out.println("0.Salir");
         }
         int indice = EntradaDatos.pedirEntero("");
         return indice;
@@ -87,7 +109,7 @@ public class MetodosVista {
     public void editarEmpleado(Empleado empleado) {
         int indice;
         do {
-            indice = mostrarOpciones();
+            indice = mostrarOpcionesEmpleado();
             switch (indice) {
                 case 1:
                     String apellido = EntradaDatos.pedirCadena("Introduce el apellido");
@@ -116,6 +138,13 @@ public class MetodosVista {
             incidenciasController.editarEmpleado(empleado);
         } while (indice != 0);
     }
+    public void editarIncidencia(){
+        int indice;
+        do{
+            indice = mostrarOpcionesIncidencia();
+            
+        }while(indice!=0);
+    }
 
     public Empleado selectEmpleado(Empleado empleado) {
         Empleado empleadoEliminar = null;
@@ -129,8 +158,12 @@ public class MetodosVista {
                     itr.remove();
                 }
             }
-            indice = mostrarEmpleados(empleados);
-            System.out.println("0.Salir");
+            List<Object> lista = new ArrayList<>();
+            for (Empleado emp : empleados) {
+                lista.add(emp);
+            }
+
+            indice = mostrarEmpleadosIncidencias(lista);
             if (indice < 0 || (indice > empleados.size())) {
                 try {
                     throw new Exceptions(Exceptions.OPCION_INCORRECTA);
@@ -156,18 +189,13 @@ public class MetodosVista {
             switch (indice) {
                 case 1:
                     //origen
-                    List<Incidencia> incidencias = incidenciasController.getIncidenciaOrigen(empleadoSesion);
-                    for(Incidencia incidencia: incidencias){
-                        System.out.println("Destino: "+incidencia.getDestino().getNusuario());
-                        System.out.println("Estado: "+incidencia.getEstado());
-                        System.out.println("Descripción: "+incidencia.getDescripcion());
-                        System.out.println("Urgente: "+incidencia.isUrgente());
-                        System.out.println("Fecha: "+ myUtilities.dateToString(incidencia.getFecha()));
-                    }
+                    List<Incidencia> incidenciasOrigen = incidenciasController.getIncidenciaOrigenDestino(empleadoSesion, true);
+                    printIncidencias(incidenciasOrigen);
                     break;
                 case 2:
                     //destino
-                    
+                    List<Incidencia> incidenciasDestino = incidenciasController.getIncidenciaOrigenDestino(empleadoSesion, false);
+                    printIncidencias(incidenciasDestino);
                     break;
                 default: {
                     try {
@@ -178,5 +206,44 @@ public class MetodosVista {
                 }
             }
         } while (indice != 0);
+    }
+
+    public void printIncidencias(List<Incidencia> incidencias) {
+        for (Incidencia incidencia : incidencias) {
+            System.out.println("Incidencia:");
+            System.out.println("Destino: " + incidencia.getDestino().getNusuario());
+            System.out.println("Estado: " + incidencia.getEstado());
+            System.out.println("Descripción: " + incidencia.getDescripcion());
+            System.out.println("Urgente: " + incidencia.isUrgente());
+            System.out.println("Fecha: " + myUtilities.dateToString(incidencia.getFecha()));
+        }
+    }
+
+    public Incidencia selectIncidencia(Empleado empleadoSesion) {
+        Incidencia incidenciaEliminar = null;
+        int indice;
+        do {
+            List<Incidencia> incidenciasOrigen = incidenciasController.getIncidenciaOrigenDestino(empleadoSesion, true);
+            
+            List<Object> lista = new ArrayList<>();
+            for (Incidencia inc : incidenciasOrigen) {
+                lista.add(inc);
+            }
+            
+            indice = mostrarEmpleadosIncidencias(lista);
+            if (indice < 0 || (indice > incidenciasOrigen.size())) {
+                try {
+                    throw new Exceptions(Exceptions.OPCION_INCORRECTA);
+                } catch (Exceptions ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+            if (indice != 0) {
+                return incidenciaEliminar = incidenciasOrigen.get(indice - 1);
+            }
+            
+        } while (indice != 0);
+
+        return incidenciaEliminar;
     }
 }

@@ -175,19 +175,21 @@ public class CassandraDAO implements DaoImpl {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public List<Incidencia> getIncidenciaByOrigen(Empleado e) {
+    public List<Incidencia> getIncidenciaOrigenDestino(Empleado e, boolean tipo) {
         List<Incidencia> incidencias = new ArrayList<>();
         Session session = cassandraConnector.getSession();
         Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_INCIDENCIA);
         selectQuery.allowFiltering();
         Select.Where selectWhere = selectQuery.where();
-        Clause clause = QueryBuilder.eq(ORIGEN_COL, e.getNusuario());
+        String col = tipo == true ? ORIGEN_COL : DESTINO_COL;
+
+        Clause clause = QueryBuilder.eq(col, e.getNusuario());
         selectWhere.and(clause);
         ResultSet results = session.execute(selectQuery);
         List<Row> rows = results.all();
         for (Row row : rows) {
             Incidencia incidencia = new Incidencia();
+            incidencia.setId(row.getInt(ID_INC_COL));
             incidencia.setDescripcion(row.getString(DESCRIPCION_COL));
             incidencia.setOrigen(e);
             incidencia.setDestino(getEmpleadoByNusuario(row.getString(DESTINO_COL)));
@@ -198,6 +200,11 @@ public class CassandraDAO implements DaoImpl {
             incidencias.add(incidencia);
         }
         return incidencias;
+    }
+
+    @Override
+    public List<Incidencia> getIncidenciaByOrigen(Empleado e) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -236,5 +243,4 @@ public class CassandraDAO implements DaoImpl {
         empleado.setEdad(row.getInt(EDAD_COL));
         return empleado;
     }
-
 }

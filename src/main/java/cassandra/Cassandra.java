@@ -68,9 +68,19 @@ public class Cassandra {
                             metodosVista.mostrarIncidencia(empleadoSesion);
                             break;
                         case 5:
+                            //borrar incidencia, solo las que tu eres origen
+                            Incidencia incidencia = metodosVista.selectIncidencia(empleadoSesion);
+                            if(incidencia != null){
+                                //borramos esta incidencia
+                                incidenciasController.deleteIncidencia(incidencia);
+                            }
                             break;
                         case 6:
-                            
+                            //editar incidencia
+                            Incidencia incidenciaEditar = metodosVista.selectIncidencia(empleadoSesion);
+                            if(incidenciaEditar!= null){
+                                
+                            }
                             break;
                         case 7:
                             //crear nuevo empleado

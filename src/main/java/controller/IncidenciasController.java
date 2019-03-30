@@ -22,46 +22,50 @@ import persistence.CassandraDAO;
  * @author Alberto
  */
 public class IncidenciasController {
-    
+
     private static IncidenciasController incidenciasController;
     private CassandraDAO cassandraDAO;
-    
+
     public static IncidenciasController getInstance() {
         if (incidenciasController == null) {
             incidenciasController = new IncidenciasController();
         }
         return incidenciasController;
     }
-    
+
     public IncidenciasController() {
         cassandraDAO = CassandraDAO.getInstance();
     }
-    
+
     public void insertEmpleado(Empleado empleado) {
         cassandraDAO.saveOrUpdateEmpleado(empleado);
     }
-    
+
     public void insertIncidencia(Incidencia incidencia) {
         cassandraDAO.insertOrUpdateIncidencia(incidencia);
-        
+
     }
-    
+
     public void deleteEmpleado(Empleado empleado) {
         cassandraDAO.removeEmpleado(empleado);
     }
     
+    public void deleteIncidencia(Incidencia incidencia){
+        cassandraDAO.removeIncidencia(incidencia);
+    }
+
     public Empleado checkNUsuario(String nusuario) {
         return cassandraDAO.getEmpleadoByNusuario(nusuario);
     }
-    
+
     public List<Empleado> getAllEmpleados() {
         return cassandraDAO.selectAllEmpleado();
     }
-    
+
     public void editarEmpleado(Empleado empleado) {
         cassandraDAO.saveOrUpdateEmpleado(empleado);
     }
-    
+
     public Empleado iniciarSesion(String nusuario, String password) {
         Empleado empleado = null;
         if (cassandraDAO.loginEmpleado(nusuario, password)) {
@@ -70,8 +74,8 @@ public class IncidenciasController {
         }
         return empleado;
     }
-    
-    public List<Incidencia> getIncidenciaOrigen(Empleado empleadoSesion){
-        return cassandraDAO.getIncidenciaByOrigen(empleadoSesion);
+
+    public List<Incidencia> getIncidenciaOrigenDestino(Empleado empleadoSesion, boolean tipo) {
+        return cassandraDAO.getIncidenciaOrigenDestino(empleadoSesion, tipo);
     }
 }

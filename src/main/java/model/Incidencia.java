@@ -24,7 +24,8 @@ public class Incidencia {
     public Incidencia() {
     }
     
-    public Incidencia(Empleado origen, Empleado destino, String descripcion, int estado, Date fecha, boolean urgente) {
+    public Incidencia(int id, Empleado origen, Empleado destino, String descripcion, int estado, Date fecha, boolean urgente) {
+        this.id = id;
         this.descripcion = descripcion;
         this.destino = destino;
         this.estado = estado;
@@ -148,4 +149,6 @@ public class Incidencia {
     public void setId(int id) {
         this.id = id;
     }
+    
+    
 }
