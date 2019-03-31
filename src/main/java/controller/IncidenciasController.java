@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import model.Empleado;
 import model.Historial;
 import model.Incidencia;
+import model.Ranking;
 import ocutilidades.EntradaDatos;
 import persistence.CassandraDAO;
 
@@ -74,6 +75,14 @@ public class IncidenciasController {
     }
     public int getMaxID(boolean control){
         return cassandraDAO.getMaxId(control);
+    }
+    
+    public Historial getUltimoInicioSesion(Empleado e){
+        return cassandraDAO.getUltimoInicioSesion(e);
+    }
+    
+    public List<Ranking> ranking(){
+        return cassandraDAO.getRankingEmpleados();
     }
 
     public Empleado iniciarSesion(String nusuario, String password) {

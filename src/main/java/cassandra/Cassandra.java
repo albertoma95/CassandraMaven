@@ -7,11 +7,18 @@ package cassandra;
 
 import controller.IncidenciasController;
 import exceptions.Exceptions;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import model.Empleado;
 import model.Historial;
 import model.Incidencia;
+import model.Ranking;
+import utilities.MyUtilities;
 
 /**
  *
@@ -28,6 +35,7 @@ public class Cassandra {
         incidenciasController = IncidenciasController.getInstance();
         MetodosVista metodosVista = MetodosVista.getInstance();
         InputAsker inputAsker = InputAsker.getInstance();
+        MyUtilities utilities = MyUtilities.getInstance();
         int indice;
         Empleado empleadoSesion = null;
         do {
@@ -99,18 +107,39 @@ public class Cassandra {
                             //borrar empleado
                             Empleado empleadoEliminar = metodosVista.selectEmpleado(empleadoSesion);
                             if (empleadoEliminar != null) {
-                                //antes de borrarle hay que tratar los eventos e incidencias donde aparezca
 
                                 incidenciasController.deleteEmpleado(empleadoEliminar);
                             }
                             break;
                         case 9:
                             //Ranking
-                            
+                            List<Ranking> listaRanking = incidenciasController.ranking();
+                            System.out.println(listaRanking.size());
+                            HashMap<String, Long> ranking = new HashMap<>();
+                            for (Ranking ran : listaRanking) {
+                                if (ranking.containsKey(ran.getNusuario())) {
+                                    ranking.put(ran.getNusuario(),ranking.get(ran.getNusuario())+1);
+                                } else {
+                                    ranking.put(ran.getNusuario(), ran.getnIncidencias());
+                                }
+                            }
+                            Map<String, Long> sorted = ranking
+                                    .entrySet()
+                                    .stream()
+                                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,LinkedHashMap::new));
+                            sorted.forEach((k, v) -> System.out.println("Empleado: " + k + ": Incidencias: " + v));
                             break;
                         case 10:
                             //ultimo login
-                            
+                            Empleado empleadoLogin = metodosVista.selectEmpleado(empleadoSesion);
+                            if (empleadoLogin != null) {
+
+                                Historial ultimoLogin = incidenciasController.getUltimoInicioSesion(empleadoLogin);
+                                if (ultimoLogin != null) {
+                                    System.out.println("Last Login: " + utilities.dateToString(ultimoLogin.getFecha()));
+                                }
+                            }
                             break;
                     }
                 }

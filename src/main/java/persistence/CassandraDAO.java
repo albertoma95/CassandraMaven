@@ -205,16 +205,11 @@ public class CassandraDAO implements DaoImpl {
     }
 
     public int getMaxId(boolean control) {
-        int max = 0;
         Session session = cassandraConnector.getSession();
         String tabla = control == true ? NOMBRE_TABLA_INCIDENCIA : NOMBRE_TABLA_HISTORIAL;
-        ResultSet rs = session.execute("select " + ID_INC_COL + " from " + NOMBRE_DATABASE + "." + tabla);
-        List<Row> rows = rs.all();
-        for (Row row : rows) {
-            if (row.getInt(ID_INC_COL) > max) {
-                max = row.getInt(ID_INC_COL);
-            }
-        }
+        ResultSet rs = session.execute("select max(" + ID_INC_COL + ")as max from " + NOMBRE_DATABASE + "." + tabla);
+        Row row = rs.one();
+        int max = row.getInt("max");
         return max;
     }
 
@@ -270,12 +265,49 @@ public class CassandraDAO implements DaoImpl {
     @Override
 
     public Historial getUltimoInicioSesion(Empleado e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Historial ultimoLogin = null;
+        Session session = cassandraConnector.getSession();
+        Select selectQuery = QueryBuilder.select().all().from(NOMBRE_DATABASE, NOMBRE_TABLA_HISTORIAL);
+        selectQuery.allowFiltering();
+        Select.Where selectWhere = selectQuery.where();
+        Clause clause = QueryBuilder.eq(EMPLEADO_COL, e.getNusuario());
+        selectWhere.and(clause);
+        ResultSet results = session.execute(selectQuery);
+        List<Row> rows = results.all();
+        for (Row row : rows) {
+            Historial historial = new Historial();
+            historial.setId(row.getInt(ID_HIS_COL));
+            historial.setEmpleado(row.getString(EMPLEADO_COL));
+            Date fecha = new Date(row.getDate(FECHA_HIS_COL).getMillisSinceEpoch());
+            historial.setFecha(fecha);
+            historial.setTipo(row.getInt(TIPO_COL));
+            if (ultimoLogin == null) {
+                ultimoLogin = historial;
+            } else {
+                if (historial.getFecha().compareTo(ultimoLogin.getFecha()) > 0) {
+                    //la nueva fecha es mas nueva que la anterior
+                    ultimoLogin = historial;
+                }
+            }
+        }
+        return ultimoLogin;
     }
 
     @Override
     public List<Ranking> getRankingEmpleados() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Ranking> rankings = new ArrayList<>();
+        Session session = cassandraConnector.getSession();
+        //no permite agrupar por algo que no sea la clave primaria..........
+        ResultSet rs = session.execute("select origen, count(*) from stucom_incidencias.incidencia where urgente=True group by id allow filtering");
+        List<Row> rows = rs.all();
+        for (Row row : rows) {
+            Ranking ran = new Ranking();
+            ran.setNusuario(row.getString(ORIGEN_COL));
+            ran.setnIncidencias(row.getLong("count"));
+            rankings.add(ran);
+        }
+
+        return rankings;
     }
 
     @Override

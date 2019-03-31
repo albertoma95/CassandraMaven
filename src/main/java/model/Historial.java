@@ -25,6 +25,11 @@ public class Historial {
         this.tipo = tipo;
     }
 
+    public Historial() {
+    }
+    
+    
+
     /**
      * Get the value of tipo
      *
