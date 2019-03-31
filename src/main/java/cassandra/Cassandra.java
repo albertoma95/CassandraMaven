@@ -7,8 +7,10 @@ package cassandra;
 
 import controller.IncidenciasController;
 import exceptions.Exceptions;
+import java.util.Date;
 import java.util.List;
 import model.Empleado;
+import model.Historial;
 import model.Incidencia;
 
 /**
@@ -16,7 +18,7 @@ import model.Incidencia;
  * @author Alberto
  */
 public class Cassandra {
-    
+
     private static IncidenciasController incidenciasController;
 
     /**
@@ -43,6 +45,8 @@ public class Cassandra {
                             throw new Exceptions(Exceptions.NUSUARIO_PASSWORD_INCORRECTO);
                         }
                         System.out.println("Bienvenido " + empleadoSesion.getNombre());
+                        Historial hislogin = new Historial(incidenciasController.getMaxID(false) + 1, empleadoSesion.getNusuario(), new Date(), 1);
+                        incidenciasController.insertarEvento(hislogin);
                     }
                 } else {
                     //resto de opciones
@@ -61,6 +65,10 @@ public class Cassandra {
                             if (nuevaIncidencia != null) {
                                 //creamos la incidencia
                                 incidenciasController.insertIncidencia(nuevaIncidencia);
+                                if (nuevaIncidencia.isUrgente()) {
+                                    Historial hislogin = new Historial(incidenciasController.getMaxID(false) + 1, empleadoSesion.getNusuario(), new Date(), 2);
+                                    incidenciasController.insertarEvento(hislogin);
+                                }
                             }
                             break;
                         case 4:
@@ -70,7 +78,7 @@ public class Cassandra {
                         case 5:
                             //borrar incidencia, solo las que tu eres origen
                             Incidencia incidencia = metodosVista.selectIncidencia(empleadoSesion);
-                            if(incidencia != null){
+                            if (incidencia != null) {
                                 //borramos esta incidencia
                                 incidenciasController.deleteIncidencia(incidencia);
                             }
@@ -78,7 +86,7 @@ public class Cassandra {
                         case 6:
                             //editar incidencia
                             Incidencia incidenciaEditar = metodosVista.selectIncidencia(empleadoSesion);
-                            if(incidenciaEditar!= null){
+                            if (incidenciaEditar != null) {
                                 metodosVista.editarIncidencia(incidenciaEditar, empleadoSesion);
                             }
                             break;
@@ -91,12 +99,18 @@ public class Cassandra {
                             //borrar empleado
                             Empleado empleadoEliminar = metodosVista.selectEmpleado(empleadoSesion);
                             if (empleadoEliminar != null) {
+                                //antes de borrarle hay que tratar los eventos e incidencias donde aparezca
+
                                 incidenciasController.deleteEmpleado(empleadoEliminar);
                             }
                             break;
                         case 9:
+                            //Ranking
+                            
                             break;
                         case 10:
+                            //ultimo login
+                            
                             break;
                     }
                 }
@@ -106,15 +120,4 @@ public class Cassandra {
         } while (indice != 0);
         System.out.println("Adiós");
     }
-
-//    private void createEmpleado() {
-//        Empleado empleado = InputAsker.askNewEmpleado();
-//        incidenciasController.insertEmpleado(empleado);
-//    }
-//
-//    private void createIncidencia() {
-//        Empleado origen = new Empleado("", "", "", 0, "");
-//        Incidencia incidencia = InputAsker.askNewIncidencia(origen);
-//        incidenciasController.insertIncidencia(incidencia);
-//    }
 }

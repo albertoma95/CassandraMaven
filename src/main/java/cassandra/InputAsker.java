@@ -10,8 +10,6 @@ import exceptions.Exceptions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Empleado;
 import model.Incidencia;
 import ocutilidades.EntradaDatos;
@@ -21,7 +19,6 @@ import ocutilidades.EntradaDatos;
  * @author Alberto
  */
 public class InputAsker {
-    
 
     private static IncidenciasController incidenciasController = IncidenciasController.getInstance();
     private static MetodosVista metodosVista = MetodosVista.getInstance();
@@ -62,7 +59,7 @@ public class InputAsker {
             String descripcion = EntradaDatos.pedirCadena("Introduce una descripción");
             int estado = 0;
             boolean urgente = isUrgente();
-            return incidencia = new Incidencia((int) (new Date().getTime() / 1000), origen, destino, descripcion, estado, new Date(), urgente);
+            return incidencia = new Incidencia(incidenciasController.getMaxID(true) + 1, origen, destino, descripcion, estado, new Date(), urgente);
         }
         return incidencia;
     }
@@ -75,6 +72,9 @@ public class InputAsker {
             System.out.println("2.Urgente");
             indice = EntradaDatos.pedirEntero("");
             switch (indice) {
+                case 1:
+                    //ya esta en false
+                    break;
                 case 2:
                     urgente = true;
                     break;
@@ -86,7 +86,7 @@ public class InputAsker {
                     }
                 }
             }
-        } while ((indice != 1) || (indice != 1));
+        } while ((indice < 1) || (indice > 2));
         return urgente;
     }
 }

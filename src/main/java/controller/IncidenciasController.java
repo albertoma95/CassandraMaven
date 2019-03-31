@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Empleado;
+import model.Historial;
 import model.Incidencia;
 import ocutilidades.EntradaDatos;
 import persistence.CassandraDAO;
@@ -45,6 +46,9 @@ public class IncidenciasController {
         cassandraDAO.insertOrUpdateIncidencia(incidencia);
 
     }
+    public void insertarEvento(Historial historial){
+        cassandraDAO.insertarEvento(historial);
+    }
 
     public void deleteEmpleado(Empleado empleado) {
         cassandraDAO.removeEmpleado(empleado);
@@ -67,6 +71,9 @@ public class IncidenciasController {
     }
     public void editarIncidencia(Incidencia incidencia){
         cassandraDAO.insertOrUpdateIncidencia(incidencia);
+    }
+    public int getMaxID(boolean control){
+        return cassandraDAO.getMaxId(control);
     }
 
     public Empleado iniciarSesion(String nusuario, String password) {
