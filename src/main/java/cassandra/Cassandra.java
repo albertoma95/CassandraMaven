@@ -113,12 +113,13 @@ public class Cassandra {
                             break;
                         case 9:
                             //Ranking
+                            System.out.println("\n-- Ránking de incidencias urgentes creadas --");
                             List<Ranking> listaRanking = incidenciasController.ranking();
-                            System.out.println(listaRanking.size());
+                            System.out.println("Total de incidencias urgentes: " + listaRanking.size());
                             HashMap<String, Long> ranking = new HashMap<>();
                             for (Ranking ran : listaRanking) {
                                 if (ranking.containsKey(ran.getNusuario())) {
-                                    ranking.put(ran.getNusuario(),ranking.get(ran.getNusuario())+1);
+                                    ranking.put(ran.getNusuario(), ranking.get(ran.getNusuario()) + 1);
                                 } else {
                                     ranking.put(ran.getNusuario(), ran.getnIncidencias());
                                 }
@@ -127,7 +128,7 @@ public class Cassandra {
                                     .entrySet()
                                     .stream()
                                     .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,LinkedHashMap::new));
+                                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
                             sorted.forEach((k, v) -> System.out.println("Empleado: " + k + ": Incidencias: " + v));
                             break;
                         case 10:

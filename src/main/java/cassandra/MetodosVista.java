@@ -42,6 +42,7 @@ public class MetodosVista {
     }
 
     public int MostrarMenu(Empleado empleado) {
+        System.out.println("\n***** MENU *****");
         if (empleado == null) {
             System.out.println("1.Iniciar Sesión");
         } else {
@@ -60,7 +61,8 @@ public class MetodosVista {
             }
         }
         System.out.println("0.Salir");
-        int indice = EntradaDatos.pedirEntero("");
+        System.out.println("\n*****************");
+        int indice = EntradaDatos.pedirEntero("Inserta una opcion: ");
         return indice;
     }
 
@@ -105,12 +107,13 @@ public class MetodosVista {
             }
             System.out.println("0.Salir");
         }
-        int indice = EntradaDatos.pedirEntero("");
+        int indice = EntradaDatos.pedirEntero("Elige el numero asociado al empleado: ");
         return indice;
     }
 
     public void editarEmpleado(Empleado empleado) {
         int indice;
+        boolean checker = false;
         do {
             indice = mostrarOpcionesEmpleado();
             switch (indice) {
@@ -130,15 +133,16 @@ public class MetodosVista {
                     String contra = EntradaDatos.pedirCadena("Introduce contraseña");
                     empleado.setPassword(contra);
                     break;
-                default: {
+                default: 
+                    checker = true;
                     try {
                         throw new Exceptions(Exceptions.OPCION_INCORRECTA);
                     } catch (Exceptions ex) {
                         System.out.println(ex.getMessage());
                     }
-                }
             }
-            incidenciasController.editarEmpleado(empleado);
+            if(!checker)
+                incidenciasController.editarEmpleado(empleado);
         } while (indice != 0);
     }
 
@@ -227,8 +231,7 @@ public class MetodosVista {
                 } catch (Exceptions ex) {
                     System.out.println(ex.getMessage());
                 }
-            }
-            if (indice != 0) {
+            } else if (indice != 0) {
                 return empleadoEliminar = empleados.get(indice - 1);
             }
 
@@ -239,6 +242,7 @@ public class MetodosVista {
     public void mostrarIncidencia(Empleado empleadoSesion) {
         int indice;
         do {
+            System.out.println("\nMenú Mostrar Incidencias");
             System.out.println("1.Incidencias que eres origen");
             System.out.println("2.Incidencias que eres destino");
             System.out.println("0.Salir");
@@ -269,10 +273,12 @@ public class MetodosVista {
         for (Incidencia incidencia : incidencias) {
             System.out.println("Incidencia:");
             System.out.println("Destino: " + incidencia.getDestino().getNusuario());
-            System.out.println("Estado: " + incidencia.getEstado());
+            String estado = incidencia.getEstado() == 0 ? "Pendiente" : "Finalizada";
+            System.out.println("Estado: " + estado);
             System.out.println("Descripción: " + incidencia.getDescripcion());
-            System.out.println("Urgente: " + incidencia.isUrgente());
-            System.out.println("Fecha: " + myUtilities.dateToString(incidencia.getFecha()));
+            String urgente = incidencia.isUrgente() ? "Si" : "No";
+            System.out.println("Urgente: " + urgente);
+            System.out.println("Fecha: " + myUtilities.dateToString(incidencia.getFecha()) + "\n");
         }
     }
 
